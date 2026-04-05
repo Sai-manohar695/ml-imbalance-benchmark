@@ -1,15 +1,16 @@
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.svm import SVC
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
 from xgboost import XGBClassifier
 
 def get_classifiers():
     return {
-        "logistic_regression": LogisticRegression(
-            max_iter=1000,
-            random_state=42
-        ),
+        "logistic_regression": Pipeline([
+            ("scaler", StandardScaler()),
+            ("clf", LogisticRegression(max_iter=3000, random_state=42))
+        ]),
         "random_forest": RandomForestClassifier(
             n_estimators=100,
             random_state=42
@@ -20,11 +21,8 @@ def get_classifiers():
             eval_metric="logloss",
             verbosity=0
         ),
-        "svm": SVC(
-            probability=True,
-            random_state=42
-        ),
-        "knn": KNeighborsClassifier(
-            n_neighbors=5
-        )
+        "knn": Pipeline([
+            ("scaler", StandardScaler()),
+            ("clf", KNeighborsClassifier(n_neighbors=5))
+        ])
     }
